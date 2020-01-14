@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Test your CPS!</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css?family=B612&display=swap" rel="stylesheet">
+    <script src="./scripts/jquery-3.4.1.min.js"></script>
+    <script src="jquery.js"></script>
+</head>
+
+<body>
+    <div class="container">
+        <button onclick="addClicks();" id="button" autofocus>Start clicking me</button>
+    </div>
+    <div class="container">
+        <p id="time">Time: 0</p>
+    </div>
+    <div class="container" id="cpscontainer">
+        <p id="cps">CPS: </p>
+    </div>
+
+    <script>
+        var running = false;
+        var clicks = 0;
+        var cps;
+
+        //All elements in vars
+        var elClicks = document.getElementById('button');
+        var elTime = document.getElementById('time');
+        var elButton = document.getElementById('button');
+
+        var elCPS = document.getElementById('cps');
+        var elCPScontainer = document.getElementById('cpscontainer');
+
+        function addClicks() {
+            if (!running) {
+                clicks++;
+                elClicks.innerHTML = "Clicks: " + clicks;
+
+                running = true;
+                var startTime = new Date();
+                var x = setInterval(function () {
+                    //Calcuting elapsed time
+                    var now = new Date();
+                    var elapsedTime = now.getTime() - startTime.getTime();
+                    //Showing elapsed time
+                    var milliseconds = Math.round((elapsedTime % 1000) / 10);
+                    var seconds = Math.floor((elapsedTime / 1000) % 60);
+                    elTime.innerHTML = "Time: " + seconds + "." + milliseconds;
+
+                    //Calculating cps and showing it every 25 milliseconds
+                    if (elapsedTime % 25 == 0) {
+                        cps = Math.round(clicks / (elapsedTime / 1000) * 10) /
+                            10; //cps rounded to one decimal
+                        elTime.innerHTML = "Time: 10";
+                        elCPS.innerHTML = "CPS: " + cps;
+                    }
+
+                    //When elapsed time hits 10 seconds and remove button
+                    if (elapsedTime >= 10000) {
+                        elButton.parentNode.removeChild(elButton);
+                        elTime.parentNode.removeChild(elTime);
+                        
+                        //for centering the amount of cps you have on screen
+                        elCPScontainer.style.height = "100vh";
+                        elCPS.style.fontSize = "50px";
+                        
+                        elCPS.innerHTML = "CPS: " + cps + "<br>" + " (in 10 seconds you clicked " + clicks + " times!)";
+
+                        running = false;
+
+                        clearInterval(x); //Stopping the timer
+                    }
+                }, 1);
+            } else if (running) {
+                clicks++;
+                elClicks.innerHTML = "Clicks: " + clicks;
+            }
+        }
+    </script>
+</body>
+
+</html>
